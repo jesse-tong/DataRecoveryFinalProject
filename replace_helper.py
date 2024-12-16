@@ -4,6 +4,7 @@ import time
 import shutil
 import os
 import zipfile
+import subprocess
 
 def replace_files(source_zip, target_directory):
     with zipfile.ZipFile(source_zip, 'r') as zip_ref:
@@ -31,11 +32,7 @@ def main():
     main_script = os.path.join(target_directory, 'main.py')
     if os.path.exists(main_script):
         try:
-            if sys.platform.startswith('win'):
-                os.startfile(main_script)
-            else:
-                os.system(f'python3 "{main_script}" &')
-            print("Main script has been restarted.")
+            print("Đã thay thế các tập tin bằng copy mới. Vui lòng chạy lại chương trình bằng 'python main.py'")
         except Exception as e:
             print(f"Failed to restart the main script: {e}")
             sys.exit(1)

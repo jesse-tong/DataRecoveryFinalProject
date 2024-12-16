@@ -73,7 +73,7 @@ def start_helper(source_zip, target_directory):
     try:
         if sys.platform.startswith('win'):
             # Detach the process on Windows
-            subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+            subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
             # Detach the process on Unix-like systems
             subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setsid)
@@ -103,11 +103,6 @@ def replace_own_source_with_zip_content(source_zip_name: str):
     if not os.path.exists(source_zip):
         print(f"Source zip file '{source_zip}' not found.")
         sys.exit(1)
-    
-    # Check if repair.py needs to perform self-replacement
-    # For example, this could be triggered based on a condition or user input
-    # Here, we'll assume that running repair.py always attempts to repair itself
-    print("Starting self-repair process...")
     
     self_replace(source_zip)
 
