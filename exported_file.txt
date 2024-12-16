@@ -1,0 +1,263 @@
+import random
+import string
+
+def generate_random_string(length=10):
+    """Generate a random string of fixed length."""
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
+
+def calculate_factorial(n):
+    """Calculate the factorial of a number."""
+    if n == 0:
+        return 1
+    else:
+        return n * calculate_factorial(n-1)
+
+def is_prime(num):
+    """Check if a number is prime."""
+    if num <= 1:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def fibonacci_sequence(n):
+    """Generate a Fibonacci sequence up to n elements."""
+    sequence = [0, 1]
+    while len(sequence) < n:
+        sequence.append(sequence[-1] + sequence[-2])
+    return sequence[:n]
+
+def bubble_sort(arr):
+    """Sort an array using bubble sort algorithm."""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+
+def binary_search(arr, x):
+    """Perform binary search on a sorted array."""
+    low = 0
+    high = len(arr) - 1
+    mid = 0
+
+    while low <= high:
+        mid = (high + low) // 2
+        if arr[mid] < x:
+            low = mid + 1
+        elif arr[mid] > x:
+            high = mid - 1
+        else:
+            return mid
+    return -1
+
+def gcd(a, b):
+    """Calculate the greatest common divisor of two numbers."""
+    while b:
+        a, b = b, a % b
+    return a
+
+def lcm(a, b):
+    """Calculate the least common multiple of two numbers."""
+    return abs(a*b) // gcd(a, b)
+
+def quicksort(arr):
+    """Sort an array using quicksort algorithm."""
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quicksort(left) + middle + quicksort(right)
+
+def merge_sort(arr):
+    """Sort an array using merge sort algorithm."""
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+
+        merge_sort(L)
+        merge_sort(R)
+
+        i = j = k = 0
+
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+def power(base, exp):
+    """Calculate the power of a number."""
+    if exp == 0:
+        return 1
+    elif exp < 0:
+        return 1 / power(base, -exp)
+    else:
+        result = 1
+        for _ in range(exp):
+            result *= base
+        return result
+
+def palindrome_check(s):
+    """Check if a string is a palindrome."""
+    return s == s[::-1]
+
+def reverse_string(s):
+    """Reverse a given string."""
+    return s[::-1]
+
+def count_vowels(s):
+    """Count the number of vowels in a string."""
+    vowels = 'aeiouAEIOU'
+    return sum(1 for char in s if char in vowels)
+
+def find_max(arr):
+    """Find the maximum element in an array."""
+    if not arr:
+        return None
+    max_val = arr[0]
+    for num in arr:
+        if num > max_val:
+            max_val = num
+    return max_val
+
+def find_min(arr):
+    """Find the minimum element in an array."""
+    if not arr:
+        return None
+    min_val = arr[0]
+    for num in arr:
+        if num < min_val:
+            min_val = num
+    return min_val
+
+def sum_of_elements(arr):
+    """Calculate the sum of elements in an array."""
+    return sum(arr)
+
+def average_of_elements(arr):
+    """Calculate the average of elements in an array."""
+    if not arr:
+        return 0
+    return sum(arr) / len(arr)
+
+def linear_search(arr, x):
+    """Perform linear search on an array."""
+    for i, item in enumerate(arr):
+        if item == x:
+            return i
+    return -1
+
+def selection_sort(arr):
+    """Sort an array using selection sort algorithm."""
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+
+def insertion_sort(arr):
+    """Sort an array using insertion sort algorithm."""
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+def count_occurrences(arr, x):
+    """Count the occurrences of an element in an array."""
+    return arr.count(x)
+
+def remove_duplicates(arr):
+    """Remove duplicates from an array."""
+    return list(set(arr))
+
+def matrix_transpose(matrix):
+    """Transpose a given matrix."""
+    return list(map(list, zip(*matrix)))
+
+def matrix_multiplication(matrix1, matrix2):
+    """Multiply two matrices."""
+    result = [[0 for _ in range(len(matrix2[0]))] for _ in range(len(matrix1))]
+    for i in range(len(matrix1)):
+        for j in range(len(matrix2[0])):
+            for k in range(len(matrix2)):
+                result[i][j] += matrix1[i][k] * matrix2[k][j]
+    return result
+
+def factorial_iterative(n):
+    """Calculate the factorial of a number iteratively."""
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
+
+def is_even(n):
+    """Check if a number is even."""
+    return n % 2 == 0
+
+def is_odd(n):
+    """Check if a number is odd."""
+    return n % 2 != 0
+
+def sum_of_digits(n):
+    """Calculate the sum of digits of a number."""
+    return sum(int(digit) for digit in str(n))
+
+def decimal_to_binary(n):
+    """Convert a decimal number to binary."""
+    return bin(n).replace("0b", "")
+
+def binary_to_decimal(b):
+    """Convert a binary number to decimal."""
+    return int(b, 2)
+
+def main():
+    print("Random String:", generate_random_string(12))
+    print("Factorial of 5:", calculate_factorial(5))
+    print("Is 17 prime?:", is_prime(17))
+    print("First 10 Fibonacci numbers:", fibonacci_sequence(10))
+
+    arr = [64, 34, 25, 12, 22, 11, 90]
+    bubble_sort(arr)
+    print("Sorted array using bubble sort:", arr)
+
+    arr = [2, 3, 4, 10, 40]
+    x = 10
+    result = binary_search(arr, x)
+    print("Element found at index:", result if result != -1 else "Element not found")
+
+    print("GCD of 54 and 24:", gcd(54, 24))
+    print("LCM of 54 and 24:", lcm(54, 24))
+
+    arr = [3, 6, 8, 10, 1, 2, 1]
+    print("Sorted array using quicksort:", quicksort(arr))
+
+    arr = [12, 11, 13, 5, 6, 7]
+    merge_sort(arr)
+    print("Sorted array using merge sort:", arr)
+
+if __name__ == "__main__":
+    main()
