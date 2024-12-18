@@ -107,28 +107,29 @@ def replace_own_source_with_zip_content(source_zip_name: str):
     self_replace(source_zip)
 
 def init_and_check_integrity():
-    source_copy_exists = os.path.exists('source.zip')
-    if not source_copy_exists:
-        create_zip_with_py_files('source.zip')
-    
-    source_hash_exists = os.path.exists('source_hash.sha256')
-    source_copy_hash_exists = os.path.exists('source_copy_hash.sha256')
-
-    #Create hash files for source code and source copy zip files if not exists
-    if not source_hash_exists:
-        source_hash = hash_all_python_source_files()
-        with open('source_hash.sha256', 'w') as f:
-            f.write(source_hash)
-    
-    if not source_copy_hash_exists:
-        source_copy_hash = hash_all_python_source_files('source_copy')
-        with open('source_copy_hash.sha256', 'w') as f:
-            f.write(source_copy_hash)
-
     #Check integrity of source code and source copy zip files
     source_hash_file = "source_hash.sha256"
     source_copy_hash_file = "source_copy_hash.sha256"
     source_copy_zip_file = "source.zip"
+
+    source_copy_exists = os.path.exists(source_copy_zip_file)
+    if not source_copy_exists:
+        create_zip_with_py_files(source_copy_zip_file)
+    
+    source_hash_exists = os.path.exists(source_hash_file)
+    source_copy_hash_exists = os.path.exists(source_copy_hash_file)
+
+    #Create hash files for source code and source copy zip files if not exists
+    if not source_hash_exists:
+        source_hash = hash_all_python_source_files()
+        with open(source_hash_file, 'w') as f:
+            f.write(source_hash)
+    
+    if not source_copy_hash_exists:
+        source_copy_hash = hash_all_python_source_files(source_copy_zip_file)
+        with open(source_copy_hash_file, 'w') as f:
+            f.write(source_copy_hash)
+
 
     current_source_hash = hash_all_python_source_files()
     current_source_copy_hash = hash_all_python_source_files(source_copy_zip_file)

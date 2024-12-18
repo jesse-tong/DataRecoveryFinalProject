@@ -38,10 +38,4 @@ def verify_OTP(OTP: str, X: str, time_limit: int = 20) -> bool:
     else:
         return False
 
-if __name__ == '__main__':
-    generated_X = generate_X()
-    print(f"Generated X: {generated_X}")
-    generated_OTP = make_smartOTP(generated_X)
-    print(f"Generated OTP: {generated_OTP}")
-    print(f"Verification: {verify_OTP(generated_OTP, generated_X)}")
 

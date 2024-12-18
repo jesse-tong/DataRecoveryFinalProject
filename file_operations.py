@@ -11,6 +11,10 @@ from Crypto.Hash import SHA256, MD5
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
 
+# Các phương thức của các lớp:
+# pack() - Chuyển đối tượng thành chuỗi bytes
+# unpack() - Chuyển chuỗi bytes chứa thông tin đối tượng thành đối tượng
+
 # Constants
 VOLUME_INFO_SIZE = 88  # bytes
 ENTRY_SIZE = 401        # bytes per entry
@@ -38,7 +42,7 @@ class VolumeInfo:
     def __init__(self, signature: bytes = b'IVOLFILE', volume_size: int = 0, metadata_encryption_key: bytes = b'\x00' * 32, machine_info_hash: bytes = b'\x00' * 32):
         self.signature = signature.ljust(8, b'\x00')[:8]
         self.volume_size = volume_size  # 16 bytes, but we'll store as two unsigned long longs
-        self.encryption_key = metadata_encryption_key  # Random 32-byte key to encrypt metadata in volume Y
+        self.encryption_key = metadata_encryption_key  # 32-byte key to encrypt metadata in volume Y
         self.machine_info_hash = machine_info_hash  # Hash of machine info
 
     def pack(self) -> bytes:
@@ -213,6 +217,7 @@ class FileSystem:
             f.seek(BACKUP_ENTRY_TABLE_OFFSET)
             f.write(self.backup_entry_table.pack())
 
+    # Nạp thông tin metadata chứa thông tin máy tạo MyFS và mật khẩu truy cập
     def load_metadata(self):
         if not os.path.exists(self.metadata_path):
             raise Exception("Không tìm thấy file metadata, vui lòng đặt file metadata tương ứng (metadata.dat) và file volume cùng một thư mục.")
@@ -255,7 +260,7 @@ class FileSystem:
             old_password_match = False
         
         if not old_password_match:
-            print("Old password does not match. Access password change failed.")
+            print("Mật khẩu cũ không đúng. Thay đổi mật khẩu truy cập MyFS thất bại.")
             return
         
         if new_password != None and new_password != "":
@@ -265,7 +270,7 @@ class FileSystem:
         else:
             self.fs_metadata.write_metadata()
         
-        print("Access password changed successfully.")
+        print("Thay đổi mật khẩu truy cập thành công.")
 
     def find_entry(self, filename: str) -> Optional[Tuple[str, int, Entry]]:
         # Search in Main Entry Table
@@ -403,7 +408,7 @@ class FileSystem:
     def export_file(self, filename: str, export_path: str = None, password: Optional[str] = None):
         entry_info = self.find_entry(filename)
         if not entry_info:
-            raise Exception("File not found.")
+            raise Exception("Tập tin không tồn tại.")
         table_type, entry_idx, entry = entry_info
 
         if entry.password_hash != b'':
@@ -439,7 +444,7 @@ class FileSystem:
             raise Exception("Kiểm tra toàn vẹn gặp lỗi hoặc giá trị không đúng. Tập tin có thể bị hư hỏng.")
 
         if not export_path and not entry.root_dir:
-            raise Exception("No export path provided and original file path is unset. Export file aborted.")
+            raise Exception("Không có đường dẫn xuất tập tin và đường dẫn tới tệp gốc không được đặt. Xuất tập tin bị hủy bỏ.")
         elif not export_path:
             export_path = entry.root_dir
 
@@ -476,7 +481,7 @@ class FileSystem:
             self.backup_entry_table.entries[entry_idx] = entry
 
         self.save_entry_tables()
-        print(f"File '{filename}' deleted successfully.")
+        print(f"Tập tin '{filename}' đã xóa thành công khỏi MyFS.")
 
     def reset_password(self, filename: str, old_password: str, new_password: str):
         entry_info = self.find_entry(filename)
@@ -490,7 +495,7 @@ class FileSystem:
         # Verify old password
         old_password_hashed = hash_sha256(old_password)
         if old_password_hashed != entry.password_hash:
-            raise Exception("Incorrect old password.")
+            raise Exception("Mật khẩu cũ không đúng.")
 
         # Derive old AES key
         old_aes_key = derive_aes_key(old_password_hashed)
@@ -570,7 +575,7 @@ class FileSystem:
             self.backup_entry_table.entries[entry_idx] = entry
 
         self.save_entry_tables()
-        print(f"Password for file '{filename}' has been reset successfully.")
+        print(f"Mật khẩu cho tập tin '{filename}' đã được đổi thành công.")
 
 if __name__ == "__main__":
     fs = FileSystem("my_volume.ivf", metadata_path="meta.ivf")

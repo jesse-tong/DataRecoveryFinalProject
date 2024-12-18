@@ -11,10 +11,9 @@ class PlatformMetadata:
         self.release = platform.release()
         self.machine = platform.machine()
         self.processor = platform.processor()
-        self.myFS_password_hash = myFS_password_hash
+        self.myFS_password_hash = myFS_password_hash # Giá trị băm mật khẩu truy cập MyFS
         self.metadata_path = metadata_path
         
-    
     def __eq__(self, other):
         return (self.platform == other.platform 
                 and self.arch == other.arch 
@@ -22,7 +21,7 @@ class PlatformMetadata:
                 and self.machine == other.machine 
                 and self.processor == other.processor)
     
-    #Lưu thông tin metadata vào file
+    #Lưu thông tin metadata vào chuỗi bytes
     def pack(self) -> bytes:
         packed = self.platform.encode('utf-8').ljust(16, b'\0')
         packed += self.arch.encode('utf-8').ljust(16, b'\0')

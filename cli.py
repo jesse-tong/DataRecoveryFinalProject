@@ -123,17 +123,25 @@ def main_program():
         print(f"Giá trị X: {generated_X}")
         print(f"Giá trị OTP: {generated_OTP}. Bạn cũng có thể sử dụng chương trình make_smartOTP để lấy OTP từ X")
         OTP = input("Nhập OTP: ")
-        if verify_OTP(OTP, generated_X, 60):
-            break
+        try:
+            if verify_OTP(OTP, generated_X, 60):
+                break
+        except:
+            print("OTP không hợp lệ")
+        
         if i == 2:
-            print("You have entered incorrect OTP 3 times. The program will exit")
+            print("Bạn đã nhập OTP sai 3 lần. Chương trình sẽ thoát")
             sys.exit()
 
     while True:
-        result = cli()
-        if result == EXIT_CODE:
-            break
-        elif result == ERROR_CODE:
+        try:
+            result = cli()
+            if result == EXIT_CODE:
+                break
+            elif result == ERROR_CODE:
+                continue
+        except Exception as e:
+            print(f"Lỗi: {e}")
             continue
     
 if __name__ == '__main__':
