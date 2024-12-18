@@ -29,10 +29,10 @@ def make_smartOTP(X: str) -> str:
     for i in range(4):
         value += str(int(delta[i]) * int(X[i])).zfill(2)
     OTP = str(value).zfill(8)
-    #Reverse the OTP to make it harder to guess that the OTP is based on the current time
+    # Reverse the OTP to make it harder to guess that the OTP is based on the current time
     OTP = OTP[::-1]
 
-    #Add hash of X, convert to decimal and get the first 8 digits
+    # Add hash of X, convert to decimal and get the first 8 digits
     hash_X = sha256(X.encode()).hexdigest()
     hash_X = int(hash_X, 16)
     hash_X = int(str(hash_X)[:8])

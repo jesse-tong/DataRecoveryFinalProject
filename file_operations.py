@@ -446,6 +446,7 @@ class FileSystem:
         if not export_path and not entry.root_dir:
             raise Exception("Không có đường dẫn xuất tập tin và đường dẫn tới tệp gốc không được đặt. Xuất tập tin bị hủy bỏ.")
         elif not export_path:
+            print(f"Dùng đường dẫn mặc định lúc chép tập tin vào MyFS: {entry.root_dir}")
             export_path = entry.root_dir
 
         with open(export_path, 'wb') as f:
@@ -454,7 +455,7 @@ class FileSystem:
         # Set the modification time and creation date of the exported file as the original file
         os.utime(export_path, (date_parse(entry.creation_date).timestamp(), date_parse(entry.modification_date).timestamp()))
 
-        print(f"File '{filename}' exported successfully to '{export_path}'.")
+        print(f"Tập tin '{filename}' xuất thành công vào '{export_path}'.")
 
     def delete_file(self, filename: str):
         entry_info = self.find_entry(filename)
@@ -488,9 +489,6 @@ class FileSystem:
         if not entry_info:
             raise Exception("File not found.")
         table_type, entry_idx, entry = entry_info
-
-        if entry.password_hash == b'\x00' * 32:
-            raise Exception("This file does not have a password set.")
 
         # Verify old password
         old_password_hashed = hash_sha256(old_password)
@@ -577,6 +575,7 @@ class FileSystem:
         self.save_entry_tables()
         print(f"Mật khẩu cho tập tin '{filename}' đã được đổi thành công.")
 
+'''
 if __name__ == "__main__":
     fs = FileSystem("my_volume.ivf", metadata_path="meta.ivf")
 
@@ -622,3 +621,4 @@ if __name__ == "__main__":
         fs.delete_file("my_file.txt")
     except Exception as e:
         print(f"Error deleting file: {e}")
+'''

@@ -100,7 +100,7 @@ def cli():
             return ERROR_CODE
         print("Chép 1 tập tin trong MyFS ra ngoài")
         filename_in_myfs = input("Nhập tên tập tin trong MyFS: ")
-        filename = input("Nhập đường dẫn tập tin cần chép ra: ")
+        filename = input("Nhập đường dẫn tập tin cần chép ra (mặc định là đường dẫn lúc chép vào MyFS): ")
         file_password = input("Nhập mật khẩu truy xuất cho tập tin: ")
         fs.export_file(filename_in_myfs, filename, file_password)
     elif choice == '8':
