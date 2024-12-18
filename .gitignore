@@ -168,3 +168,9 @@ MyFS.dat
 source.zip
 source_hash.sha256
 source_copy_hash.sha256
+
+# Exercise 1
+*.vhd
+*.vhdx
+*.vdi
+*.Vol
