@@ -1,84 +1,69 @@
-import sys
+import os
 
-# Define signatures
-PNG_START = b"\x89PNG\r\n\x1a\n"
-PNG_END_CHUNK = b"IEND"
-JPG_START = b"\xff\xd8\xff"
-JPG_END = b"\xff\xd9"
+# Mẫu đầu và cuối của ảnh JPG và PNG
+JPG_HEADER = b'\xFF\xD8'
+JPG_FOOTER = b'\xFF\xD9'
+PNG_HEADER = b'\x89\x50\x4E\x47'
+PNG_FOOTER = b'\xAE\x42\x60\x82'
 
-def find_all_occurrences(data, signature):
-    """Return a list of all indexes at which the signature occurs in data."""
+def find_images_in_volume(image_file):
+    with open(image_file, 'rb') as f:
+        data = f.read()
+    
+    images = []
+
+    # Tìm kiếm các ảnh JPG
     start = 0
-    occurrences = []
-    while True:
-        idx = data.find(signature, start)
-        if idx == -1:
+    while start < len(data):
+        # Tìm kiếm phần đầu của JPG
+        start_jpg = data.find(JPG_HEADER, start)
+        if start_jpg == -1:
             break
-        occurrences.append(idx)
-        start = idx + 1
-    return occurrences
 
-def recover_jpegs(data):
-    """Recover JPEG files from the binary data."""
-    jpegs = []
-    start_positions = find_all_occurrences(data, JPG_START)
-    for start_pos in start_positions:
-        end_pos = data.find(JPG_END, start_pos + len(JPG_START))
-        if end_pos != -1:
-            # Include the end marker
-            end_pos += len(JPG_END)
-            jpegs.append(data[start_pos:end_pos])
-    return jpegs
+        # Tìm kiếm phần cuối của JPG
+        end_jpg = data.find(JPG_FOOTER, start_jpg)
+        if end_jpg == -1:
+            break
 
-def recover_pngs(data):
-    """Recover PNG files from the binary data."""
-    pngs = []
-    start_positions = find_all_occurrences(data, PNG_START)
-    for start_pos in start_positions:
-        # Find IEND chunk. The IEND chunk is always 12 bytes: 
-        # 4-byte length (0x00000000), 4-byte chunk type ('IEND'), 4-byte CRC.
-        # We'll search for 'IEND' and then add 8 bytes total (4 for length & 4 for CRC)
-        iend_pos = data.find(PNG_END_CHUNK, start_pos)
-        if iend_pos != -1:
-            # The end of PNG will be at iend_pos + 4 (chunk type) + 4 (CRC) = iend_pos + 8
-            end_pos = iend_pos + 8
-            pngs.append(data[start_pos:end_pos])
-    return pngs
+        # Cắt ảnh JPG và lưu lại
+        end_jpg += len(JPG_FOOTER)
+        images.append(('image_{}.jpg'.format(len(images)+1), data[start_jpg:end_jpg]))
 
-def main():
-    # Open the volume file
-    filename = "Image00.Vol.vhd"
-    try:
-        with open(filename, "rb") as f:
-            data = f.read()
-    except FileNotFoundError:
-        print(f"[-] {filename} not found.")
-        sys.exit(1)
+        # Tiếp tục tìm kiếm
+        start = end_jpg
 
-    # Recover JPG and PNG files
-    recovered_jpgs = recover_jpegs(data)
-    recovered_pngs = recover_pngs(data)
+    # Tìm kiếm các ảnh PNG
+    start = 0
+    while start < len(data):
+        # Tìm kiếm phần đầu của PNG
+        start_png = data.find(PNG_HEADER, start)
+        if start_png == -1:
+            break
 
-    # Write recovered JPG files
-    jpg_count = 0
-    for jpg_data in recovered_jpgs:
-        out_name = f"Recovered_{jpg_count:03d}.jpg"
-        with open(out_name, "wb") as out:
-            out.write(jpg_data)
-        print(f"[+] Recovered JPEG: {out_name}")
-        jpg_count += 1
+        # Tìm kiếm phần cuối của PNG
+        end_png = data.find(PNG_FOOTER, start_png)
+        if end_png == -1:
+            break
 
-    # Write recovered PNG files
-    png_count = 0
-    for png_data in recovered_pngs:
-        out_name = f"Recovered_{png_count:03d}.png"
-        with open(out_name, "wb") as out:
-            out.write(png_data)
-        print(f"[+] Recovered PNG: {out_name}")
-        png_count += 1
+        # Cắt ảnh PNG và lưu lại
+        end_png += len(PNG_FOOTER)
+        images.append(('image_{}.png'.format(len(images)+1), data[start_png:end_png]))
 
-    print("[+] Recovery complete!")
-    print(f"    Recovered {jpg_count} JPEG(s) and {png_count} PNG(s).")
+        # Tiếp tục tìm kiếm
+        start = end_png
+
+    return images
+
+def save_images(images):
+    for filename, image_data in images:
+        with open(filename, 'wb') as img_file:
+            img_file.write(image_data)
+        print(f"Saved {filename}")
 
 if __name__ == "__main__":
-    main()
+    image_file = 'Image00.Vol'  # Tên file chứa volume
+    images = find_images_in_volume(image_file)
+    if images:
+        save_images(images)
+    else:
+        print("No images found.")
